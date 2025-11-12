@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import '@/App.css';
-import SetupPage from './pages/SetupPage';
-import LoginPage from './pages/LoginPage';
-import AdminDashboard from './pages/AdminDashboard';
-import UserDashboard from './pages/UserDashboard';
+import SetupPage από './pages/SetupPage';
+import LoginPage από './pages/LoginPage';
+import AdminDashboard από './pages/AdminDashboard';
+import UserDashboard από './pages/UserDashboard';
 import { checkSystemStatus } from './services/api';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;

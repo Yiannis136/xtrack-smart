@@ -1,0 +1,92 @@
+import { useState } from 'react';
+import { initialSetup } from '../services/api';
+
+function SetupPage({ onSetupComplete }) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSetup = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      // Setup with automatic 12-month license starting today
+      const today = new Date().toISOString().split('T')[0];
+      await initialSetup(
+        { start_date: today, duration_months: 12 },
+        'SeatAteca@842342'
+      );
+      alert('✅ Setup Completed Successfully!\n\nThe system is now ready to use.\nLicense: 12 months (1 year)');
+      onSetupComplete();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">Initial Setup</h1>
+          <p className="text-gray-600">Configure your Vehicle Tracking System</p>
+        </div>
+
+        <form onSubmit={handleSetup} className="space-y-6">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <h3 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Initial System Setup
+            </h3>
+            <ul className="space-y-3 text-sm text-blue-800">
+              <li className="flex items-start gap-2">
+                <span className="text-green-600 font-bold">✓</span>
+                <span><strong>Administrator account</strong> will be created</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-600 font-bold">✓</span>
+                <span><strong>Default user account</strong> will be created</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-600 font-bold">✓</span>
+                <span><strong>License validity:</strong> 12 months (starts today)</span>
+              </li>
+            </ul>
+          </div>
+
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <p className="text-sm text-yellow-800 flex items-start gap-2">
+              <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <span>
+                <strong>Important:</strong> After setup completes, you will receive your login credentials. Please keep them secure.
+              </span>
+            </p>
+          </div>
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg transition duration-200 disabled:bg-gray-400 shadow-lg"
+            data-testid="setup-button"
+          >
+            {loading ? 'Setting up...' : 'Complete Setup'}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+export default SetupPage;

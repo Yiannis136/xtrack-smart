@@ -1,23 +1,19 @@
 import { useState, useEffect } from 'react';
-import '@/App.css';
-import SetupPage from './pages/SetupPage';
-import LoginPage from './pages/LoginPage';
-import AdminDashboard from './pages/AdminDashboard';
-import UserDashboard from './pages/UserDashboard';
-import { checkSystemStatus } from './services/api';
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+import SetupPage από './pages/SetupPage';
+import LoginPage από './pages/LoginPage';
+import AdminDashboard από './pages/AdminDashboard';
+import UserDashboard από './pages/UserDashboard';
+import { checkSystemStatus } από './services/api';
+import './App.css';
 
 function App() {
   const [systemStatus, setSystemStatus] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadSystemStatus();
-    loadUserFromToken();
   }, []);
 
   const loadSystemStatus = async () => {
@@ -25,62 +21,54 @@ function App() {
       const status = await checkSystemStatus();
       setSystemStatus(status);
     } catch (error) {
-      console.error('Failed to load system status:', error);
+      console.error('Failed to check system status:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const loadUserFromToken = () => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-    }
-  };
-
   const handleLoginSuccess = (userData, authToken) => {
-    localStorage.setItem('token', authToken);
-    localStorage.setItem('user', JSON.stringify(userData));
-    setToken(authToken);
     setUser(userData);
-    loadSystemStatus();
+    setToken(authToken);
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setToken(null);
     setUser(null);
+    setToken(null);
   };
 
   const handleSetupComplete = () => {
     loadSystemStatus();
   };
 
+  const handleStatusUpdate = () => {
+    loadSystemStatus();
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading system...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
         </div>
       </div>
     );
   }
 
-  // Initial Setup
-  if (systemStatus && !systemStatus.is_setup_complete) {
+  if (!systemStatus?.is_setup_complete) {
     return <SetupPage onSetupComplete={handleSetupComplete} />;
   }
 
-  // Login
-  if (!user || !token) {
-    return <LoginPage onLoginSuccess={handleLoginSuccess} systemStatus={systemStatus} />;
+  if (!user) {
+    return (
+      <LoginPage 
+        onLoginSuccess={handleLoginSuccess} 
+        systemStatus={systemStatus}
+      />
+    );
   }
 
-  // Dashboard based on role
   if (user.role === 'admin') {
     return (
       <AdminDashboard 
@@ -88,7 +76,7 @@ function App() {
         token={token} 
         onLogout={handleLogout}
         systemStatus={systemStatus}
-        onStatusUpdate={loadSystemStatus}
+        onStatusUpdate={handleStatusUpdate}
       />
     );
   } else {
@@ -98,7 +86,7 @@ function App() {
         token={token} 
         onLogout={handleLogout}
         systemStatus={systemStatus}
-        onStatusUpdate={loadSystemStatus}
+        onStatusUpdate={handleStatusUpdate}
       />
     );
   }

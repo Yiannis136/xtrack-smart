@@ -87,26 +87,57 @@ function VehicleManagement() {
   };
 
   const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.text('Πίνακας Οχημάτων', 14, 15);
-    
-    const tableData = filteredVehicles.map(vehicle => [
-      vehicle.companyName,
-      vehicle.model,
-      vehicle.plate,
-      vehicle.status,
-      new Date(vehicle.subscriptionDate).toLocaleDateString('el-GR'),
-      new Date(vehicle.expiryDate).toLocaleDateString('el-GR')
-    ]);
+    try {
+      const doc = new jsPDF();
+      
+      // Add title with Greek text support
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Πίνακας Οχημάτων', 14, 15);
+      
+      // Prepare table data
+      const tableData = filteredVehicles.map(vehicle => [
+        vehicle.companyName,
+        vehicle.model,
+        vehicle.plate,
+        getStatusLabel(vehicle.status),
+        new Date(vehicle.subscriptionDate).toLocaleDateString('el-GR'),
+        new Date(vehicle.expiryDate).toLocaleDateString('el-GR')
+      ]);
 
-    doc.autoTable({
-      startY: 20,
-      head: [['Εταιρεία', 'Μοντέλο', 'Πινακίδα', 'Κατάσταση', 'Συνδρομή', 'Λήξη']],
-      body: tableData
-    });
+      doc.autoTable({
+        startY: 25,
+        head: [['Εταιρεία', 'Μοντέλο', 'Πινακίδα', 'Κατάσταση', 'Ημ/νία Συνδρομής', 'Ημ/νία Λήξης']],
+        body: tableData,
+        styles: {
+          font: 'helvetica',
+          fontSize: 10,
+          fontStyle: 'normal',
+          lineColor: [200, 200, 200],
+          lineWidth: 0.1
+        },
+        headStyles: {
+          fillColor: [59, 130, 246],
+          textColor: 255,
+          fontStyle: 'bold',
+          halign: 'center',
+          fontSize: 11
+        },
+        alternateRowStyles: {
+          fillColor: [245, 247, 250]
+        },
+        margin: { top: 25 },
+        theme: 'striped'
+      });
 
-    doc.save('vehicles.pdf');
-    console.log('Exported to PDF');
+      doc.save('vehicles.pdf');
+      setMessage('Το PDF δημιουργήθηκε επιτυχώς!');
+      setTimeout(() => setMessage(''), 3000);
+    } catch (error) {
+      console.error('Error exporting PDF:', error);
+      setMessage('Σφάλμα κατά τη δημιουργία του PDF');
+      setTimeout(() => setMessage(''), 3000);
+    }
   };
 
   const getStatusBadge = (status) => {

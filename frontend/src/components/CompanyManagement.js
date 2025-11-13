@@ -85,27 +85,58 @@ function CompanyManagement() {
   };
 
   const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.text('Πίνακας Εταιρειών', 14, 15);
-    
-    const tableData = filteredCompanies.map(company => [
-      company.name,
-      company.subscription,
-      `${company.vehicleCount}/${company.vehicleLimit}`,
-      company.userCount,
-      company.status,
-      new Date(company.expiryDate).toLocaleDateString('el-GR'),
-      company.daysRemaining
-    ]);
+    try {
+      const doc = new jsPDF();
+      
+      // Add title with Greek text support
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Πίνακας Εταιρειών', 14, 15);
+      
+      // Prepare table data
+      const tableData = filteredCompanies.map(company => [
+        company.name,
+        company.subscription,
+        `${company.vehicleCount}/${company.vehicleLimit}`,
+        company.userCount.toString(),
+        getStatusLabel(company.status),
+        new Date(company.expiryDate).toLocaleDateString('el-GR'),
+        company.daysRemaining.toString()
+      ]);
 
-    doc.autoTable({
-      startY: 20,
-      head: [['Εταιρεία', 'Συνδρομή', 'Οχήματα', 'Χρήστες', 'Κατάσταση', 'Λήξη', 'Ημέρες']],
-      body: tableData
-    });
+      doc.autoTable({
+        startY: 25,
+        head: [['Εταιρεία', 'Συνδρομή', 'Οχήματα', 'Χρήστες', 'Κατάσταση', 'Λήξη', 'Ημέρες']],
+        body: tableData,
+        styles: {
+          font: 'helvetica',
+          fontSize: 10,
+          fontStyle: 'normal',
+          lineColor: [200, 200, 200],
+          lineWidth: 0.1
+        },
+        headStyles: {
+          fillColor: [59, 130, 246],
+          textColor: 255,
+          fontStyle: 'bold',
+          halign: 'center',
+          fontSize: 11
+        },
+        alternateRowStyles: {
+          fillColor: [245, 247, 250]
+        },
+        margin: { top: 25 },
+        theme: 'striped'
+      });
 
-    doc.save('companies.pdf');
-    console.log('Exported to PDF');
+      doc.save('companies.pdf');
+      setMessage('Το PDF δημιουργήθηκε επιτυχώς!');
+      setTimeout(() => setMessage(''), 3000);
+    } catch (error) {
+      console.error('Error exporting PDF:', error);
+      setMessage('Σφάλμα κατά τη δημιουργία του PDF');
+      setTimeout(() => setMessage(''), 3000);
+    }
   };
 
   const getStatusBadge = (status) => {

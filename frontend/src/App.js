@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import SetupPage from './pages/SetupPage';
-import LoginPage from './pages/LoginPage';
-import AdminDashboard from './pages/AdminDashboard';
-import UserDashboard from './pages/UserDashboard';
-import { checkSystemStatus } from './services/api';
+import SetupPage from '@/pages/SetupPage';
+import LoginPage from '@/pages/LoginPage';
+import AdminDashboard from '@/pages/AdminDashboard';
+import UserDashboard from '@/pages/UserDashboard';
+import { checkSystemStatus } from '@/services/api';
 import './App.css';
 
 function App() {

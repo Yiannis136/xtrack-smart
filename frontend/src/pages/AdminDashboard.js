@@ -4,6 +4,10 @@ import UserManagement from '../components/UserManagement';
 import BackupRestore from '../components/BackupRestore';
 import TrackingDashboard from '../components/TrackingDashboard';
 import LicenseWarning from '../components/LicenseWarning';
+import NotificationService from '../components/NotificationService';
+import CompanyManagement from '../components/CompanyManagement';
+import VehicleManagement from '../components/VehicleManagement';
+import SubscriptionManagement from '../components/SubscriptionManagement';
 
 function AdminDashboard({ user, token, onLogout, systemStatus, onStatusUpdate }) {
   const [activeTab, setActiveTab] = useState('tracking');
@@ -58,10 +62,10 @@ function AdminDashboard({ user, token, onLogout, systemStatus, onStatusUpdate })
       {/* Tabs */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex space-x-8" aria-label="Tabs">
+          <nav className="flex space-x-8 overflow-x-auto" aria-label="Tabs">
             <button
               onClick={() => setActiveTab('tracking')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition ${
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition whitespace-nowrap ${
                 activeTab === 'tracking'
                   ? 'border-blue-500 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -71,8 +75,48 @@ function AdminDashboard({ user, token, onLogout, systemStatus, onStatusUpdate })
               Tracking & Reports
             </button>
             <button
+              onClick={() => setActiveTab('companies')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition whitespace-nowrap ${
+                activeTab === 'companies'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Εταιρείες
+            </button>
+            <button
+              onClick={() => setActiveTab('vehicles')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition whitespace-nowrap ${
+                activeTab === 'vehicles'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Οχήματα
+            </button>
+            <button
+              onClick={() => setActiveTab('subscriptions')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition whitespace-nowrap ${
+                activeTab === 'subscriptions'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Συνδρομές
+            </button>
+            <button
+              onClick={() => setActiveTab('notifications')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition whitespace-nowrap ${
+                activeTab === 'notifications'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Ειδοποιήσεις
+            </button>
+            <button
               onClick={() => setActiveTab('license')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition ${
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition whitespace-nowrap ${
                 activeTab === 'license'
                   ? 'border-blue-500 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -83,7 +127,7 @@ function AdminDashboard({ user, token, onLogout, systemStatus, onStatusUpdate })
             </button>
             <button
               onClick={() => setActiveTab('users')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition ${
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition whitespace-nowrap ${
                 activeTab === 'users'
                   ? 'border-blue-500 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -94,7 +138,7 @@ function AdminDashboard({ user, token, onLogout, systemStatus, onStatusUpdate })
             </button>
             <button
               onClick={() => setActiveTab('backup')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition ${
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition whitespace-nowrap ${
                 activeTab === 'backup'
                   ? 'border-blue-500 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -110,6 +154,10 @@ function AdminDashboard({ user, token, onLogout, systemStatus, onStatusUpdate })
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {activeTab === 'tracking' && <TrackingDashboard token={token} user={user} />}
+        {activeTab === 'companies' && <CompanyManagement />}
+        {activeTab === 'vehicles' && <VehicleManagement />}
+        {activeTab === 'subscriptions' && <SubscriptionManagement />}
+        {activeTab === 'notifications' && <NotificationService />}
         {activeTab === 'license' && <LicenseManagement token={token} onUpdate={onStatusUpdate} />}
         {activeTab === 'users' && <UserManagement token={token} />}
         {activeTab === 'backup' && <BackupRestore token={token} />}

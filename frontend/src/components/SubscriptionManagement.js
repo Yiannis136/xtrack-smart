@@ -89,8 +89,9 @@ function SubscriptionManagement() {
     try {
       const doc = new jsPDF();
       
-      // Add title
+      // Add title with Greek text support
       doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
       doc.text('Πίνακας Συνδρομών', 14, 15);
       
       // Prepare table data
@@ -111,18 +112,22 @@ function SubscriptionManagement() {
         styles: {
           font: 'helvetica',
           fontSize: 9,
-          fontStyle: 'normal'
+          fontStyle: 'normal',
+          lineColor: [200, 200, 200],
+          lineWidth: 0.1
         },
         headStyles: {
           fillColor: [59, 130, 246],
           textColor: 255,
           fontStyle: 'bold',
-          halign: 'center'
+          halign: 'center',
+          fontSize: 10
         },
         alternateRowStyles: {
           fillColor: [245, 247, 250]
         },
-        margin: { top: 25 }
+        margin: { top: 25 },
+        theme: 'striped'
       });
 
       doc.save('subscriptions.pdf');

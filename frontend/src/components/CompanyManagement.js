@@ -88,8 +88,9 @@ function CompanyManagement() {
     try {
       const doc = new jsPDF();
       
-      // Add title
+      // Add title with Greek text support
       doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
       doc.text('Πίνακας Εταιρειών', 14, 15);
       
       // Prepare table data
@@ -110,18 +111,22 @@ function CompanyManagement() {
         styles: {
           font: 'helvetica',
           fontSize: 10,
-          fontStyle: 'normal'
+          fontStyle: 'normal',
+          lineColor: [200, 200, 200],
+          lineWidth: 0.1
         },
         headStyles: {
           fillColor: [59, 130, 246],
           textColor: 255,
           fontStyle: 'bold',
-          halign: 'center'
+          halign: 'center',
+          fontSize: 11
         },
         alternateRowStyles: {
           fillColor: [245, 247, 250]
         },
-        margin: { top: 25 }
+        margin: { top: 25 },
+        theme: 'striped'
       });
 
       doc.save('companies.pdf');

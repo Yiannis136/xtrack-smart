@@ -36,50 +36,50 @@ function CompanyManagement() {
 
   const handleBatchUpdate = () => {
     if (selectedCompanies.length === 0) {
-      setMessage('Δεν έχετε επιλέξει εταιρείες');
+      setMessage('No companies selected');
       return;
     }
     console.log('Batch update for companies:', selectedCompanies);
-    setMessage(`Ενημερώθηκαν ${selectedCompanies.length} εταιρείες`);
+    setMessage(`Updated ${selectedCompanies.length} companies`);
     setTimeout(() => setMessage(''), 3000);
   };
 
   const handleBatchRenew = () => {
     if (selectedCompanies.length === 0) {
-      setMessage('Δεν έχετε επιλέξει εταιρείες');
+      setMessage('No companies selected');
       return;
     }
     console.log('Batch renew for companies:', selectedCompanies);
-    setMessage(`Ανανεώθηκαν οι άδειες ${selectedCompanies.length} εταιρειών`);
+    setMessage(`Renewed licenses for ${selectedCompanies.length} companies`);
     setTimeout(() => setMessage(''), 3000);
   };
 
   const handleBatchDisable = () => {
     if (selectedCompanies.length === 0) {
-      setMessage('Δεν έχετε επιλέξει εταιρείες');
+      setMessage('No companies selected');
       return;
     }
-    if (window.confirm(`Είστε σίγουροι ότι θέλετε να απενεργοποιήσετε ${selectedCompanies.length} εταιρείες;`)) {
+    if (window.confirm(`Are you sure you want to disable ${selectedCompanies.length} companies?`)) {
       console.log('Batch disable for companies:', selectedCompanies);
-      setMessage(`Απενεργοποιήθηκαν ${selectedCompanies.length} εταιρείες`);
+      setMessage(`Disabled ${selectedCompanies.length} companies`);
       setTimeout(() => setMessage(''), 3000);
     }
   };
 
   const exportToExcel = () => {
     const data = filteredCompanies.map(company => ({
-      'Εταιρεία': company.name,
-      'Συνδρομή': company.subscription,
-      'Οχήματα': `${company.vehicleCount}/${company.vehicleLimit}`,
-      'Χρήστες': company.userCount,
-      'Κατάσταση': company.status,
-      'Λήξη': new Date(company.expiryDate).toLocaleDateString('el-GR'),
-      'Ημέρες Απομένουν': company.daysRemaining
+      'Company': company.name,
+      'Subscription': company.subscription,
+      'Vehicles': `${company.vehicleCount}/${company.vehicleLimit}`,
+      'Users': company.userCount,
+      'Status': company.status,
+      'Expiry': new Date(company.expiryDate).toLocaleDateString('en-US'),
+      'Days Remaining': company.daysRemaining
     }));
 
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Εταιρείες');
+    XLSX.utils.book_append_sheet(wb, ws, 'Companies');
     XLSX.writeFile(wb, 'companies.xlsx');
     console.log('Exported to Excel');
   };
@@ -88,10 +88,10 @@ function CompanyManagement() {
     try {
       const doc = new jsPDF();
       
-      // Add title with Greek text support
+      // Add title
       doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
-      doc.text('Πίνακας Εταιρειών', 14, 15);
+      doc.text('Companies Table', 14, 15);
       
       // Prepare table data
       const tableData = filteredCompanies.map(company => [
@@ -100,13 +100,13 @@ function CompanyManagement() {
         `${company.vehicleCount}/${company.vehicleLimit}`,
         company.userCount.toString(),
         getStatusLabel(company.status),
-        new Date(company.expiryDate).toLocaleDateString('el-GR'),
+        new Date(company.expiryDate).toLocaleDateString('en-US'),
         company.daysRemaining.toString()
       ]);
 
       doc.autoTable({
         startY: 25,
-        head: [['Εταιρεία', 'Συνδρομή', 'Οχήματα', 'Χρήστες', 'Κατάσταση', 'Λήξη', 'Ημέρες']],
+        head: [['Company', 'Subscription', 'Vehicles', 'Users', 'Status', 'Expiry', 'Days']],
         body: tableData,
         styles: {
           font: 'helvetica',
@@ -130,11 +130,11 @@ function CompanyManagement() {
       });
 
       doc.save('companies.pdf');
-      setMessage('Το PDF δημιουργήθηκε επιτυχώς!');
+      setMessage('PDF created successfully!');
       setTimeout(() => setMessage(''), 3000);
     } catch (error) {
       console.error('Error exporting PDF:', error);
-      setMessage('Σφάλμα κατά τη δημιουργία του PDF');
+      setMessage('Error creating PDF');
       setTimeout(() => setMessage(''), 3000);
     }
   };
@@ -150,9 +150,9 @@ function CompanyManagement() {
 
   const getStatusLabel = (status) => {
     const labels = {
-      active: 'Ενεργή',
-      warning: 'Προειδοποίηση',
-      exceeded: 'Υπέρβαση'
+      active: 'Active',
+      warning: 'Warning',
+      exceeded: 'Exceeded'
     };
     return labels[status] || status;
   };
@@ -160,7 +160,7 @@ function CompanyManagement() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-semibold text-gray-800">Διαχείριση Εταιρειών</h2>
+        <h2 className="text-2xl font-semibold text-gray-800">Company Management</h2>
         <div className="flex gap-2">
           <button
             onClick={exportToExcel}
@@ -188,26 +188,26 @@ function CompanyManagement() {
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Αναζήτηση</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="Αναζήτηση εταιρείας..."
+              placeholder="Search company..."
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Φίλτρο Κατάστασης</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Status Filter</label>
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             >
-              <option value="all">Όλες</option>
-              <option value="active">Ενεργές</option>
-              <option value="warning">Προειδοποίηση</option>
-              <option value="exceeded">Υπέρβαση</option>
+              <option value="all">All</option>
+              <option value="active">Active</option>
+              <option value="warning">Warning</option>
+              <option value="exceeded">Exceeded</option>
             </select>
           </div>
         </div>
@@ -218,26 +218,26 @@ function CompanyManagement() {
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="flex justify-between items-center">
             <p className="text-sm font-medium text-blue-800">
-              Επιλεγμένες: {selectedCompanies.length} εταιρείες
+              Selected: {selectedCompanies.length} companies
             </p>
             <div className="flex gap-2">
               <button
                 onClick={handleBatchUpdate}
                 className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition"
               >
-                Ενημέρωση
+                Update
               </button>
               <button
                 onClick={handleBatchRenew}
                 className="bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition"
               >
-                Ανανέωση
+                Renew
               </button>
               <button
                 onClick={handleBatchDisable}
                 className="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition"
               >
-                Απενεργοποίηση
+                Disable
               </button>
             </div>
           </div>
@@ -259,25 +259,25 @@ function CompanyManagement() {
                   />
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Εταιρεία
+                  Company
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Συνδρομή
+                  Subscription
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Οχήματα
+                  Vehicles
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Χρήστες
+                  Users
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Κατάσταση
+                  Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Λήξη
+                  Expiry
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Ημέρες
+                  Days
                 </th>
               </tr>
             </thead>
@@ -317,7 +317,7 @@ function CompanyManagement() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {new Date(company.expiryDate).toLocaleDateString('el-GR')}
+                    {new Date(company.expiryDate).toLocaleDateString('en-US')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`text-sm font-semibold ${

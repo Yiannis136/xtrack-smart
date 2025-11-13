@@ -36,51 +36,51 @@ function SubscriptionManagement() {
 
   const handleBatchUpdate = () => {
     if (selectedSubscriptions.length === 0) {
-      setMessage('Δεν έχετε επιλέξει συνδρομές');
+      setMessage('No subscriptions selected');
       return;
     }
     console.log('Batch update for subscriptions:', selectedSubscriptions);
-    setMessage(`Ενημερώθηκαν ${selectedSubscriptions.length} συνδρομές`);
+    setMessage(`Updated ${selectedSubscriptions.length} subscriptions`);
     setTimeout(() => setMessage(''), 3000);
   };
 
   const handleBatchRenew = () => {
     if (selectedSubscriptions.length === 0) {
-      setMessage('Δεν έχετε επιλέξει συνδρομές');
+      setMessage('No subscriptions selected');
       return;
     }
     console.log('Batch renew for subscriptions:', selectedSubscriptions);
-    setMessage(`Ανανεώθηκαν ${selectedSubscriptions.length} συνδρομές`);
+    setMessage(`Renewed ${selectedSubscriptions.length} subscriptions`);
     setTimeout(() => setMessage(''), 3000);
   };
 
   const handleBatchDisable = () => {
     if (selectedSubscriptions.length === 0) {
-      setMessage('Δεν έχετε επιλέξει συνδρομές');
+      setMessage('No subscriptions selected');
       return;
     }
-    if (window.confirm(`Είστε σίγουροι ότι θέλετε να απενεργοποιήσετε ${selectedSubscriptions.length} συνδρομές;`)) {
+    if (window.confirm(`Are you sure you want to disable ${selectedSubscriptions.length} subscriptions?`)) {
       console.log('Batch disable for subscriptions:', selectedSubscriptions);
-      setMessage(`Απενεργοποιήθηκαν ${selectedSubscriptions.length} συνδρομές`);
+      setMessage(`Disabled ${selectedSubscriptions.length} subscriptions`);
       setTimeout(() => setMessage(''), 3000);
     }
   };
 
   const exportToExcel = () => {
     const data = filteredSubscriptions.map(sub => ({
-      'Εταιρεία': sub.companyName,
-      'Τύπος': sub.type,
-      'Τιμή': sub.price,
-      'Όριο Οχημάτων': sub.vehicleLimit,
-      'Έναρξη': new Date(sub.startDate).toLocaleDateString('el-GR'),
-      'Λήξη': new Date(sub.expiryDate).toLocaleDateString('el-GR'),
-      'Κατάσταση': sub.status,
-      'Αυτόματη Ανανέωση': sub.autoRenew ? 'Ναι' : 'Όχι'
+      'Company': sub.companyName,
+      'Type': sub.type,
+      'Price': sub.price,
+      'Vehicle Limit': sub.vehicleLimit,
+      'Start': new Date(sub.startDate).toLocaleDateString('en-US'),
+      'Expiry': new Date(sub.expiryDate).toLocaleDateString('en-US'),
+      'Status': sub.status,
+      'Auto Renew': sub.autoRenew ? 'Yes' : 'No'
     }));
 
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Συνδρομές');
+    XLSX.utils.book_append_sheet(wb, ws, 'Subscriptions');
     XLSX.writeFile(wb, 'subscriptions.xlsx');
     console.log('Exported to Excel');
   };
@@ -89,10 +89,10 @@ function SubscriptionManagement() {
     try {
       const doc = new jsPDF();
       
-      // Add title with Greek text support
+      // Add title
       doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
-      doc.text('Πίνακας Συνδρομών', 14, 15);
+      doc.text('Subscriptions Table', 14, 15);
       
       // Prepare table data
       const tableData = filteredSubscriptions.map(sub => [
@@ -100,14 +100,14 @@ function SubscriptionManagement() {
         sub.type,
         sub.price,
         sub.vehicleLimit.toString(),
-        new Date(sub.expiryDate).toLocaleDateString('el-GR'),
+        new Date(sub.expiryDate).toLocaleDateString('en-US'),
         getStatusLabel(sub.status),
-        sub.autoRenew ? 'Ναι' : 'Όχι'
+        sub.autoRenew ? 'Yes' : 'No'
       ]);
 
       doc.autoTable({
         startY: 25,
-        head: [['Εταιρεία', 'Τύπος', 'Τιμή', 'Όριο Οχημάτων', 'Λήξη', 'Κατάσταση', 'Αυτόματη Ανανέωση']],
+        head: [['Company', 'Type', 'Price', 'Vehicle Limit', 'Expiry', 'Status', 'Auto Renew']],
         body: tableData,
         styles: {
           font: 'helvetica',
@@ -131,11 +131,11 @@ function SubscriptionManagement() {
       });
 
       doc.save('subscriptions.pdf');
-      setMessage('Το PDF δημιουργήθηκε επιτυχώς!');
+      setMessage('PDF created successfully!');
       setTimeout(() => setMessage(''), 3000);
     } catch (error) {
       console.error('Error exporting PDF:', error);
-      setMessage('Σφάλμα κατά τη δημιουργία του PDF');
+      setMessage('Error creating PDF');
       setTimeout(() => setMessage(''), 3000);
     }
   };
@@ -151,9 +151,9 @@ function SubscriptionManagement() {
 
   const getStatusLabel = (status) => {
     const labels = {
-      active: 'Ενεργή',
-      expiring: 'Λήγει Σύντομα',
-      expired: 'Έχει Λήξει'
+      active: 'Active',
+      expiring: 'Expiring Soon',
+      expired: 'Expired'
     };
     return labels[status] || status;
   };
@@ -166,7 +166,7 @@ function SubscriptionManagement() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-semibold text-gray-800">Διαχείριση Συνδρομών</h2>
+        <h2 className="text-2xl font-semibold text-gray-800">Subscription Management</h2>
         <div className="flex gap-2">
           <button
             onClick={exportToExcel}
@@ -196,7 +196,7 @@ function SubscriptionManagement() {
           <div className="flex items-center gap-3">
             <div className="text-3xl">✅</div>
             <div>
-              <p className="text-sm text-green-600 font-medium">Ενεργές Συνδρομές</p>
+              <p className="text-sm text-green-600 font-medium">Active Subscriptions</p>
               <p className="text-2xl font-bold text-green-800">
                 {subscriptions.filter(s => s.status === 'active').length}
               </p>
@@ -207,7 +207,7 @@ function SubscriptionManagement() {
           <div className="flex items-center gap-3">
             <div className="text-3xl">⚠️</div>
             <div>
-              <p className="text-sm text-yellow-600 font-medium">Λήγουν Σύντομα</p>
+              <p className="text-sm text-yellow-600 font-medium">Expiring Soon</p>
               <p className="text-2xl font-bold text-yellow-800">
                 {subscriptions.filter(s => s.status === 'expiring').length}
               </p>
@@ -218,7 +218,7 @@ function SubscriptionManagement() {
           <div className="flex items-center gap-3">
             <div className="text-3xl">❌</div>
             <div>
-              <p className="text-sm text-red-600 font-medium">Έχουν Λήξει</p>
+              <p className="text-sm text-red-600 font-medium">Expired</p>
               <p className="text-2xl font-bold text-red-800">
                 {subscriptions.filter(s => s.status === 'expired').length}
               </p>
@@ -231,26 +231,26 @@ function SubscriptionManagement() {
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Αναζήτηση</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="Αναζήτηση συνδρομής..."
+              placeholder="Search subscription..."
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Φίλτρο Κατάστασης</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Status Filter</label>
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             >
-              <option value="all">Όλες</option>
-              <option value="active">Ενεργές</option>
-              <option value="expiring">Λήγουν Σύντομα</option>
-              <option value="expired">Έχουν Λήξει</option>
+              <option value="all">All</option>
+              <option value="active">Active</option>
+              <option value="expiring">Expiring Soon</option>
+              <option value="expired">Expired</option>
             </select>
           </div>
         </div>
@@ -261,26 +261,26 @@ function SubscriptionManagement() {
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="flex justify-between items-center">
             <p className="text-sm font-medium text-blue-800">
-              Επιλεγμένες: {selectedSubscriptions.length} συνδρομές
+              Selected: {selectedSubscriptions.length} subscriptions
             </p>
             <div className="flex gap-2">
               <button
                 onClick={handleBatchUpdate}
                 className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition"
               >
-                Ενημέρωση
+                Update
               </button>
               <button
                 onClick={handleBatchRenew}
                 className="bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition"
               >
-                Ανανέωση
+                Renew
               </button>
               <button
                 onClick={handleBatchDisable}
                 className="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition"
               >
-                Απενεργοποίηση
+                Disable
               </button>
             </div>
           </div>
@@ -302,28 +302,28 @@ function SubscriptionManagement() {
                   />
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Εταιρεία
+                  Company
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Τύπος
+                  Type
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Τιμή
+                  Price
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Όριο Οχημάτων
+                  Vehicle Limit
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Λήξη
+                  Expiry
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Ημέρες
+                  Days
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Auto-Renew
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Κατάσταση
+                  Status
                 </th>
               </tr>
             </thead>
@@ -355,7 +355,7 @@ function SubscriptionManagement() {
                       {sub.vehicleLimit}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {new Date(sub.expiryDate).toLocaleDateString('el-GR')}
+                      {new Date(sub.expiryDate).toLocaleDateString('en-US')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`text-sm font-semibold ${

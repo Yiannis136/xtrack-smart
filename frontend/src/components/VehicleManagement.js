@@ -39,49 +39,49 @@ function VehicleManagement() {
 
   const handleBatchUpdate = () => {
     if (selectedVehicles.length === 0) {
-      setMessage('Δεν έχετε επιλέξει οχήματα');
+      setMessage('No vehicles selected');
       return;
     }
     console.log('Batch update for vehicles:', selectedVehicles);
-    setMessage(`Ενημερώθηκαν ${selectedVehicles.length} οχήματα`);
+    setMessage(`Updated ${selectedVehicles.length} vehicles`);
     setTimeout(() => setMessage(''), 3000);
   };
 
   const handleBatchRenew = () => {
     if (selectedVehicles.length === 0) {
-      setMessage('Δεν έχετε επιλέξει οχήματα');
+      setMessage('No vehicles selected');
       return;
     }
     console.log('Batch renew for vehicles:', selectedVehicles);
-    setMessage(`Ανανεώθηκαν ${selectedVehicles.length} οχήματα`);
+    setMessage(`Renewed ${selectedVehicles.length} vehicles`);
     setTimeout(() => setMessage(''), 3000);
   };
 
   const handleBatchDisable = () => {
     if (selectedVehicles.length === 0) {
-      setMessage('Δεν έχετε επιλέξει οχήματα');
+      setMessage('No vehicles selected');
       return;
     }
-    if (window.confirm(`Είστε σίγουροι ότι θέλετε να απενεργοποιήσετε ${selectedVehicles.length} οχήματα;`)) {
+    if (window.confirm(`Are you sure you want to disable ${selectedVehicles.length} vehicles?`)) {
       console.log('Batch disable for vehicles:', selectedVehicles);
-      setMessage(`Απενεργοποιήθηκαν ${selectedVehicles.length} οχήματα`);
+      setMessage(`Disabled ${selectedVehicles.length} vehicles`);
       setTimeout(() => setMessage(''), 3000);
     }
   };
 
   const exportToExcel = () => {
     const data = filteredVehicles.map(vehicle => ({
-      'Εταιρεία': vehicle.companyName,
-      'Μοντέλο': vehicle.model,
-      'Πινακίδα': vehicle.plate,
-      'Κατάσταση': vehicle.status,
-      'Ημ/νία Συνδρομής': new Date(vehicle.subscriptionDate).toLocaleDateString('el-GR'),
-      'Ημ/νία Λήξης': new Date(vehicle.expiryDate).toLocaleDateString('el-GR')
+      'Company': vehicle.companyName,
+      'Model': vehicle.model,
+      'Plate': vehicle.plate,
+      'Status': vehicle.status,
+      'Subscription Date': new Date(vehicle.subscriptionDate).toLocaleDateString('en-US'),
+      'Expiry Date': new Date(vehicle.expiryDate).toLocaleDateString('en-US')
     }));
 
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Οχήματα');
+    XLSX.utils.book_append_sheet(wb, ws, 'Vehicles');
     XLSX.writeFile(wb, 'vehicles.xlsx');
     console.log('Exported to Excel');
   };
@@ -90,10 +90,10 @@ function VehicleManagement() {
     try {
       const doc = new jsPDF();
       
-      // Add title with Greek text support
+      // Add title
       doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
-      doc.text('Πίνακας Οχημάτων', 14, 15);
+      doc.text('Vehicles Table', 14, 15);
       
       // Prepare table data
       const tableData = filteredVehicles.map(vehicle => [
@@ -101,13 +101,13 @@ function VehicleManagement() {
         vehicle.model,
         vehicle.plate,
         getStatusLabel(vehicle.status),
-        new Date(vehicle.subscriptionDate).toLocaleDateString('el-GR'),
-        new Date(vehicle.expiryDate).toLocaleDateString('el-GR')
+        new Date(vehicle.subscriptionDate).toLocaleDateString('en-US'),
+        new Date(vehicle.expiryDate).toLocaleDateString('en-US')
       ]);
 
       doc.autoTable({
         startY: 25,
-        head: [['Εταιρεία', 'Μοντέλο', 'Πινακίδα', 'Κατάσταση', 'Ημ/νία Συνδρομής', 'Ημ/νία Λήξης']],
+        head: [['Company', 'Model', 'Plate', 'Status', 'Subscription Date', 'Expiry Date']],
         body: tableData,
         styles: {
           font: 'helvetica',
@@ -131,11 +131,11 @@ function VehicleManagement() {
       });
 
       doc.save('vehicles.pdf');
-      setMessage('Το PDF δημιουργήθηκε επιτυχώς!');
+      setMessage('PDF created successfully!');
       setTimeout(() => setMessage(''), 3000);
     } catch (error) {
       console.error('Error exporting PDF:', error);
-      setMessage('Σφάλμα κατά τη δημιουργία του PDF');
+      setMessage('Error creating PDF');
       setTimeout(() => setMessage(''), 3000);
     }
   };
@@ -151,9 +151,9 @@ function VehicleManagement() {
 
   const getStatusLabel = (status) => {
     const labels = {
-      active: 'Ενεργό',
-      warning: 'Προειδοποίηση',
-      inactive: 'Ανενεργό'
+      active: 'Active',
+      warning: 'Warning',
+      inactive: 'Inactive'
     };
     return labels[status] || status;
   };
@@ -161,7 +161,7 @@ function VehicleManagement() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-semibold text-gray-800">Διαχείριση Οχημάτων</h2>
+        <h2 className="text-2xl font-semibold text-gray-800">Vehicle Management</h2>
         <div className="flex gap-2">
           <button
             onClick={exportToExcel}
@@ -189,39 +189,39 @@ function VehicleManagement() {
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Αναζήτηση</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="Αναζήτηση οχήματος..."
+              placeholder="Search vehicle..."
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Εταιρεία</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
             <select
               value={filterCompany}
               onChange={(e) => setFilterCompany(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             >
-              <option value="all">Όλες</option>
+              <option value="all">All</option>
               {mockCompanies.map(company => (
                 <option key={company.id} value={company.id}>{company.name}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Κατάσταση</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             >
-              <option value="all">Όλα</option>
-              <option value="active">Ενεργά</option>
-              <option value="warning">Προειδοποίηση</option>
-              <option value="inactive">Ανενεργά</option>
+              <option value="all">All</option>
+              <option value="active">Active</option>
+              <option value="warning">Warning</option>
+              <option value="inactive">Inactive</option>
             </select>
           </div>
         </div>
@@ -232,26 +232,26 @@ function VehicleManagement() {
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="flex justify-between items-center">
             <p className="text-sm font-medium text-blue-800">
-              Επιλεγμένα: {selectedVehicles.length} οχήματα
+              Selected: {selectedVehicles.length} vehicles
             </p>
             <div className="flex gap-2">
               <button
                 onClick={handleBatchUpdate}
                 className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition"
               >
-                Ενημέρωση
+                Update
               </button>
               <button
                 onClick={handleBatchRenew}
                 className="bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition"
               >
-                Ανανέωση
+                Renew
               </button>
               <button
                 onClick={handleBatchDisable}
                 className="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition"
               >
-                Απενεργοποίηση
+                Disable
               </button>
             </div>
           </div>
@@ -273,22 +273,22 @@ function VehicleManagement() {
                   />
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Εταιρεία
+                  Company
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Μοντέλο
+                  Model
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Πινακίδα
+                  Plate
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Κατάσταση
+                  Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Ημ/νία Συνδρομής
+                  Subscription Date
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Ημ/νία Λήξης
+                  Expiry Date
                 </th>
               </tr>
             </thead>
@@ -320,10 +320,10 @@ function VehicleManagement() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {new Date(vehicle.subscriptionDate).toLocaleDateString('el-GR')}
+                    {new Date(vehicle.subscriptionDate).toLocaleDateString('en-US')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {new Date(vehicle.expiryDate).toLocaleDateString('el-GR')}
+                    {new Date(vehicle.expiryDate).toLocaleDateString('en-US')}
                   </td>
                 </tr>
               ))}

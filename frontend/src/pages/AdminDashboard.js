@@ -29,16 +29,16 @@ function AdminDashboard({ user, token, onLogout, systemStatus, onStatusUpdate })
               {/* License Expiry Info */}
               {systemStatus && systemStatus.license_expiry && (
                 <div className="hidden md:block text-right px-4 py-2 bg-blue-50 rounded-lg border border-blue-200">
-                  <p className="text-xs text-blue-600 font-medium">Λήξη Άδειας</p>
+                  <p className="text-xs text-blue-600 font-medium">License Expiry</p>
                   <p className="text-sm font-bold text-blue-900">
-                    {new Date(systemStatus.license_expiry).toLocaleDateString('el-GR', {
+                    {new Date(systemStatus.license_expiry).toLocaleDateString('en-US', {
                       day: '2-digit',
                       month: '2-digit',
                       year: 'numeric'
                     })}
                   </p>
                   <p className="text-xs text-blue-700">
-                    ({systemStatus.days_remaining} ημέρες απομένουν)
+                    ({systemStatus.days_remaining} days remaining)
                   </p>
                 </div>
               )}
@@ -82,7 +82,7 @@ function AdminDashboard({ user, token, onLogout, systemStatus, onStatusUpdate })
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              Εταιρείες
+              Companies
             </button>
             <button
               onClick={() => setActiveTab('vehicles')}
@@ -92,7 +92,7 @@ function AdminDashboard({ user, token, onLogout, systemStatus, onStatusUpdate })
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              Οχήματα
+              Vehicles
             </button>
             <button
               onClick={() => setActiveTab('subscriptions')}
@@ -102,7 +102,7 @@ function AdminDashboard({ user, token, onLogout, systemStatus, onStatusUpdate })
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              Συνδρομές
+              Subscriptions
             </button>
             <button
               onClick={() => setActiveTab('notifications')}
@@ -112,7 +112,7 @@ function AdminDashboard({ user, token, onLogout, systemStatus, onStatusUpdate })
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              Ειδοποιήσεις
+              Notifications
             </button>
             <button
               onClick={() => setActiveTab('license')}

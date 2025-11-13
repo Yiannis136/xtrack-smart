@@ -84,29 +84,41 @@ function CompanyManagement() {
     console.log('Exported to Excel');
   };
 
+  const getStatusLabelEnglish = (status) => {
+    const labels = {
+      active: 'Active',
+      warning: 'Warning',
+      exceeded: 'Exceeded'
+    };
+    return labels[status] || status;
+  };
+
   const exportToPDF = () => {
     try {
       const doc = new jsPDF();
       
-      // Add title with Greek text support
+      // Add bilingual title (English as primary for font compatibility)
       doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
-      doc.text('Πίνακας Εταιρειών', 14, 15);
+      doc.text('Company Management Table', 14, 15);
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.text('(Pinakas Etairiwn)', 14, 22);
       
-      // Prepare table data
+      // Prepare table data with English status labels
       const tableData = filteredCompanies.map(company => [
         company.name,
         company.subscription,
         `${company.vehicleCount}/${company.vehicleLimit}`,
         company.userCount.toString(),
-        getStatusLabel(company.status),
-        new Date(company.expiryDate).toLocaleDateString('el-GR'),
+        getStatusLabelEnglish(company.status),
+        new Date(company.expiryDate).toLocaleDateString('en-US'),
         company.daysRemaining.toString()
       ]);
 
       doc.autoTable({
-        startY: 25,
-        head: [['Εταιρεία', 'Συνδρομή', 'Οχήματα', 'Χρήστες', 'Κατάσταση', 'Λήξη', 'Ημέρες']],
+        startY: 28,
+        head: [['Company', 'Subscription', 'Vehicles', 'Users', 'Status', 'Expiry', 'Days']],
         body: tableData,
         styles: {
           font: 'helvetica',
@@ -125,7 +137,7 @@ function CompanyManagement() {
         alternateRowStyles: {
           fillColor: [245, 247, 250]
         },
-        margin: { top: 25 },
+        margin: { top: 28 },
         theme: 'striped'
       });
 

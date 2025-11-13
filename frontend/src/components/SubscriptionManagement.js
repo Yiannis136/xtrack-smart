@@ -85,29 +85,41 @@ function SubscriptionManagement() {
     console.log('Exported to Excel');
   };
 
+  const getStatusLabelEnglish = (status) => {
+    const labels = {
+      active: 'Active',
+      expiring: 'Expiring Soon',
+      expired: 'Expired'
+    };
+    return labels[status] || status;
+  };
+
   const exportToPDF = () => {
     try {
       const doc = new jsPDF();
       
-      // Add title with Greek text support
+      // Add bilingual title (English as primary for font compatibility)
       doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
-      doc.text('Πίνακας Συνδρομών', 14, 15);
+      doc.text('Subscription Management Table', 14, 15);
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.text('(Pinakas Syndromwn)', 14, 22);
       
-      // Prepare table data
+      // Prepare table data with English labels
       const tableData = filteredSubscriptions.map(sub => [
         sub.companyName,
         sub.type,
         sub.price,
         sub.vehicleLimit.toString(),
-        new Date(sub.expiryDate).toLocaleDateString('el-GR'),
-        getStatusLabel(sub.status),
-        sub.autoRenew ? 'Ναι' : 'Όχι'
+        new Date(sub.expiryDate).toLocaleDateString('en-US'),
+        getStatusLabelEnglish(sub.status),
+        sub.autoRenew ? 'Yes' : 'No'
       ]);
 
       doc.autoTable({
-        startY: 25,
-        head: [['Εταιρεία', 'Τύπος', 'Τιμή', 'Όριο Οχημάτων', 'Λήξη', 'Κατάσταση', 'Αυτόματη Ανανέωση']],
+        startY: 28,
+        head: [['Company', 'Type', 'Price', 'Vehicle Limit', 'Expiry', 'Status', 'Auto-Renew']],
         body: tableData,
         styles: {
           font: 'helvetica',
@@ -126,7 +138,7 @@ function SubscriptionManagement() {
         alternateRowStyles: {
           fillColor: [245, 247, 250]
         },
-        margin: { top: 25 },
+        margin: { top: 28 },
         theme: 'striped'
       });
 

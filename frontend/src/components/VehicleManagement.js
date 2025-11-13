@@ -86,28 +86,40 @@ function VehicleManagement() {
     console.log('Exported to Excel');
   };
 
+  const getStatusLabelEnglish = (status) => {
+    const labels = {
+      active: 'Active',
+      warning: 'Warning',
+      inactive: 'Inactive'
+    };
+    return labels[status] || status;
+  };
+
   const exportToPDF = () => {
     try {
       const doc = new jsPDF();
       
-      // Add title with Greek text support
+      // Add bilingual title (English as primary for font compatibility)
       doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
-      doc.text('Πίνακας Οχημάτων', 14, 15);
+      doc.text('Vehicle Management Table', 14, 15);
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.text('(Pinakas Oximaton)', 14, 22);
       
-      // Prepare table data
+      // Prepare table data with English status labels
       const tableData = filteredVehicles.map(vehicle => [
         vehicle.companyName,
         vehicle.model,
         vehicle.plate,
-        getStatusLabel(vehicle.status),
-        new Date(vehicle.subscriptionDate).toLocaleDateString('el-GR'),
-        new Date(vehicle.expiryDate).toLocaleDateString('el-GR')
+        getStatusLabelEnglish(vehicle.status),
+        new Date(vehicle.subscriptionDate).toLocaleDateString('en-US'),
+        new Date(vehicle.expiryDate).toLocaleDateString('en-US')
       ]);
 
       doc.autoTable({
-        startY: 25,
-        head: [['Εταιρεία', 'Μοντέλο', 'Πινακίδα', 'Κατάσταση', 'Ημ/νία Συνδρομής', 'Ημ/νία Λήξης']],
+        startY: 28,
+        head: [['Company', 'Model', 'Plate', 'Status', 'Subscription Date', 'Expiry Date']],
         body: tableData,
         styles: {
           font: 'helvetica',
@@ -126,7 +138,7 @@ function VehicleManagement() {
         alternateRowStyles: {
           fillColor: [245, 247, 250]
         },
-        margin: { top: 25 },
+        margin: { top: 28 },
         theme: 'striped'
       });
 

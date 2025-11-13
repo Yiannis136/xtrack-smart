@@ -71,18 +71,61 @@
 - Proper data type conversions
 - Καθαρός, διατηρήσιμος κώδικας
 
-## Σημείωση για Ελληνικούς Χαρακτήρες
+## Bilingual Support & Greek Character Handling
 
-Η τρέχουσα υλοποίηση χρησιμοποιεί το standard Helvetica font του jsPDF. 
-Οι ελληνικοί χαρακτήρες θα εμφανίζονται, αν και με κάποιους περιορισμούς 
-λόγω του WinAnsiEncoding.
+### Current Implementation (Updated)
 
-Για **πλήρη υποστήριξη** ελληνικών χαρακτήρων:
-1. Προσθέστε ένα TTF font που υποστηρίζει ελληνικά (π.χ. Roboto, DejaVu Sans)
-2. Μετατρέψτε το με το font converter του jsPDF
-3. Προσθέστε το στο project και χρησιμοποιήστε το στις PDF functions
+The PDF generation now uses **English as the primary language** with Greek transliterations in subtitles. This approach resolves the Greek character rendering issues with the standard Helvetica font while maintaining accessibility for Greek users.
 
-Παράδειγμα στο αρχείο: `frontend/src/utils/pdfGreekFont.js`
+**Key Changes:**
+- **Titles**: English titles with Greek transliteration subtitles (e.g., "Company Management Table" with "(Pinakas Etairiwn)")
+- **Table Headers**: English column headers (e.g., "Company", "Status", "Expiry Date")
+- **Status Labels**: English status values (e.g., "Active", "Warning", "Expired")
+- **Date Format**: Changed from `el-GR` to `en-US` format for better compatibility
+- **Boolean Values**: English text (e.g., "Yes"/"No" instead of "Ναι"/"Όχι")
+
+### Why English as Primary Language?
+
+1. **Universal Font Support**: The standard Helvetica font in jsPDF fully supports English characters
+2. **No Rendering Issues**: Eliminates Greek character encoding problems
+3. **International Accessibility**: Makes PDFs readable by international users
+4. **No Additional Dependencies**: Avoids adding custom font files
+
+### Bilingual Approach Details
+
+Each PDF component now includes:
+1. **Main English Title** (16pt, bold)
+2. **Greek Transliteration Subtitle** (12pt, normal) - using Latin characters
+3. **English Table Headers** - clear and universally readable
+4. **English Status Labels** - consistent across all tables
+
+### Updated Components
+
+#### 1. CompanyManagement.js
+- Title: "Company Management Table (Pinakas Etairiwn)"
+- Headers: Company, Subscription, Vehicles, Users, Status, Expiry, Days
+- Status: Active, Warning, Exceeded
+
+#### 2. VehicleManagement.js
+- Title: "Vehicle Management Table (Pinakas Oximaton)"
+- Headers: Company, Model, Plate, Status, Subscription Date, Expiry Date
+- Status: Active, Warning, Inactive
+
+#### 3. SubscriptionManagement.js
+- Title: "Subscription Management Table (Pinakas Syndromwn)"
+- Headers: Company, Type, Price, Vehicle Limit, Expiry, Status, Auto-Renew
+- Status: Active, Expiring Soon, Expired
+
+### Alternative: Full Greek Support (Future Enhancement)
+
+For **complete Greek character support** in the future:
+1. Add a TTF font that supports Greek characters (e.g., Roboto, DejaVu Sans, Noto Sans)
+2. Convert it using jsPDF's font converter tool
+3. Include the converted font file in the project
+4. Load and use the custom font in PDF functions
+5. Toggle between English and Greek based on user preference
+
+Example implementation would be in: `frontend/src/utils/pdfGreekFont.js`
 
 ## Testing
 

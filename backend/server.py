@@ -35,6 +35,12 @@ db = client[os.environ['DB_NAME']]
 
 # Create the main app
 app = FastAPI(title="Vehicle Tracking System")
+
+
+@app.get("/")
+async def root():
+    return {"status": "API running"}
+
 api_router = APIRouter(prefix="/api")
 
 # Configure logging

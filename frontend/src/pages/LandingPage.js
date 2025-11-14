@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../LanguageContext';
 
 function LandingPage() {
   const navigate = useNavigate();
-  const [language, setLanguage] = useState('el'); // 'el' for Greek, 'en' for English
+  const { language, setLanguage } = useLanguage();
 
   const translations = {
     el: {

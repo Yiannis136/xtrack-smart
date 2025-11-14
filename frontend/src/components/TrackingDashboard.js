@@ -250,6 +250,12 @@ function TrackingDashboard({ token, user }) {
 
   const exportToPDF = () => {
     try {
+      // Check if there is data to export
+      if (!records || records.length === 0) {
+        setMessage('❌ No data to export. Please generate a report first.');
+        return;
+      }
+
       const doc = new jsPDF('p', 'mm', 'a4');
       const pageWidth = doc.internal.pageSize.getWidth();
       const pageHeight = doc.internal.pageSize.getHeight();
@@ -317,13 +323,13 @@ function TrackingDashboard({ token, user }) {
         doc.setFontSize(9);
         doc.text(`Total Trips: ${totalTripsForId} | Days: ${totalDaysForId} | Hours: ${totalHoursForId}h ${totalMinutesForId}m | Avg: ${totalDaysForId > 0 ? Math.round(totalHoursForId / totalDaysForId) : 0}h/day`, 14, 43);
         
-        // Daily Summary Table
+        // Daily Summary Table with safe fallbacks
         const tableData = Object.entries(identifierDailySummary).map(([date, data]) => [
-          date,
-          data.tripCount,
-          formatTime(data.firstTrip.date),
-          formatTime(data.lastTrip.date),
-          data.workHours
+          date || '',
+          (data.tripCount !== undefined && data.tripCount !== null) ? data.tripCount : 0,
+          data.firstTrip?.date ? formatTime(data.firstTrip.date) : '',
+          data.lastTrip?.date ? formatTime(data.lastTrip.date) : '',
+          data.workHours || '0h 0m'
         ]);
         
         autoTable(doc, {

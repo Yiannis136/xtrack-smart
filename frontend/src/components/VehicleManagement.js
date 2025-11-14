@@ -88,6 +88,13 @@ function VehicleManagement() {
 
   const exportToPDF = () => {
     try {
+      // Check if there is data to export
+      if (!filteredVehicles || filteredVehicles.length === 0) {
+        setMessage('No data to export. Please adjust your filters or add vehicles first.');
+        setTimeout(() => setMessage(''), 3000);
+        return;
+      }
+
       const doc = new jsPDF();
       
       // Add title
@@ -95,14 +102,14 @@ function VehicleManagement() {
       doc.setFont('helvetica', 'bold');
       doc.text('Vehicles Table', 14, 15);
       
-      // Prepare table data
+      // Prepare table data with safe fallbacks for undefined/null values
       const tableData = filteredVehicles.map(vehicle => [
-        vehicle.companyName,
-        vehicle.model,
-        vehicle.plate,
-        getStatusLabel(vehicle.status),
-        new Date(vehicle.subscriptionDate).toLocaleDateString('en-US'),
-        new Date(vehicle.expiryDate).toLocaleDateString('en-US')
+        vehicle.companyName || '',
+        vehicle.model || '',
+        vehicle.plate || '',
+        getStatusLabel(vehicle.status) || '',
+        vehicle.subscriptionDate ? new Date(vehicle.subscriptionDate).toLocaleDateString('en-US') : '',
+        vehicle.expiryDate ? new Date(vehicle.expiryDate).toLocaleDateString('en-US') : ''
       ]);
 
       doc.autoTable({
@@ -135,7 +142,7 @@ function VehicleManagement() {
       setTimeout(() => setMessage(''), 3000);
     } catch (error) {
       console.error('Error exporting PDF:', error);
-      setMessage('Error creating PDF');
+      setMessage('Error creating PDF: ' + (error.message || 'Unknown error'));
       setTimeout(() => setMessage(''), 3000);
     }
   };

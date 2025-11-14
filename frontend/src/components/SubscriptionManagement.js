@@ -87,6 +87,13 @@ function SubscriptionManagement() {
 
   const exportToPDF = () => {
     try {
+      // Check if there is data to export
+      if (!filteredSubscriptions || filteredSubscriptions.length === 0) {
+        setMessage('No data to export. Please adjust your filters or add subscriptions first.');
+        setTimeout(() => setMessage(''), 3000);
+        return;
+      }
+
       const doc = new jsPDF();
       
       // Add title
@@ -94,15 +101,15 @@ function SubscriptionManagement() {
       doc.setFont('helvetica', 'bold');
       doc.text('Subscriptions Table', 14, 15);
       
-      // Prepare table data
+      // Prepare table data with safe fallbacks for undefined/null values
       const tableData = filteredSubscriptions.map(sub => [
-        sub.companyName,
-        sub.type,
-        sub.price,
-        sub.vehicleLimit.toString(),
-        new Date(sub.expiryDate).toLocaleDateString('en-US'),
-        getStatusLabel(sub.status),
-        sub.autoRenew ? 'Yes' : 'No'
+        sub.companyName || '',
+        sub.type || '',
+        sub.price || '',
+        (sub.vehicleLimit !== undefined && sub.vehicleLimit !== null) ? sub.vehicleLimit.toString() : '0',
+        sub.expiryDate ? new Date(sub.expiryDate).toLocaleDateString('en-US') : '',
+        getStatusLabel(sub.status) || '',
+        (sub.autoRenew !== undefined && sub.autoRenew !== null) ? (sub.autoRenew ? 'Yes' : 'No') : 'No'
       ]);
 
       doc.autoTable({
@@ -135,7 +142,7 @@ function SubscriptionManagement() {
       setTimeout(() => setMessage(''), 3000);
     } catch (error) {
       console.error('Error exporting PDF:', error);
-      setMessage('Error creating PDF');
+      setMessage('Error creating PDF: ' + (error.message || 'Unknown error'));
       setTimeout(() => setMessage(''), 3000);
     }
   };

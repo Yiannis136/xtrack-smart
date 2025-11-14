@@ -6,7 +6,7 @@ import SetupPage from './pages/SetupPage';
 import LoginPage from './pages/LoginPage';
 import AdminDashboard from './pages/AdminDashboard';
 import UserDashboard from './pages/UserDashboard';
-import RegisterNow from './pages/RegisterNow.jsx'; // <-- ΝΕΟ import
+import RegisterNow from './pages/RegisterNow'; // <-- ΝΕΟ import
 import { checkSystemStatus } from './services/api';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;

@@ -8,6 +8,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import UserDashboard from './pages/UserDashboard';
 import RegisterNow from './pages/RegisterNow'; // <-- Σωστό import!
 import { checkSystemStatus } from './services/api';
+import { LanguageProvider } from './LanguageContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -87,69 +88,71 @@ function App() {
   );
 
   return (
-    <Router>
-      <Routes>
-        {/* Landing Page */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/home" element={<LandingPage />} />
-        <Route path="/landing" element={<LandingPage />} />
+    <LanguageProvider>
+      <Router>
+        <Routes>
+          {/* Landing Page */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/home" element={<LandingPage />} />
+          <Route path="/landing" element={<LandingPage />} />
 
-        {/* Register - ΝΕΟ route, οδηγεί στο σωστό component */}
-        <Route path="/register" element={<RegisterNow />} />
+          {/* Register - ΝΕΟ route, οδηγεί στο σωστό component */}
+          <Route path="/register" element={<RegisterNow />} />
 
-        {/* Subscribe placeholder */}
-        <Route path="/subscribe" element={<SubscribePage />} />
+          {/* Subscribe placeholder */}
+          <Route path="/subscribe" element={<SubscribePage />} />
 
-        {/* Setup */}
-        <Route 
-          path="/setup" 
-          element={
-            loading ? <LoadingScreen /> :
-            systemStatus && !systemStatus.is_setup_complete ? 
-              <SetupPage onSetupComplete={handleSetupComplete} /> :
-              <Navigate to="/login" replace />
-          } 
-        />
+          {/* Setup */}
+          <Route 
+            path="/setup" 
+            element={
+              loading ? <LoadingScreen /> :
+              systemStatus && !systemStatus.is_setup_complete ? 
+                <SetupPage onSetupComplete={handleSetupComplete} /> :
+                <Navigate to="/login" replace />
+            } 
+          />
 
-        {/* Login */}
-        <Route 
-          path="/login" 
-          element={
-            loading ? <LoadingScreen /> :
-            !user || !token ? 
-              <LoginPage onLoginSuccess={handleLoginSuccess} systemStatus={systemStatus} /> :
-              <Navigate to="/dashboard" replace />
-          } 
-        />
+          {/* Login */}
+          <Route 
+            path="/login" 
+            element={
+              loading ? <LoadingScreen /> :
+              !user || !token ? 
+                <LoginPage onLoginSuccess={handleLoginSuccess} systemStatus={systemStatus} /> :
+                <Navigate to="/dashboard" replace />
+            } 
+          />
 
-        {/* Dashboard */}
-        <Route 
-          path="/dashboard" 
-          element={
-            loading ? <LoadingScreen /> :
-            !user || !token ? <Navigate to="/login" replace /> :
-            user.role === 'admin' ? 
-              <AdminDashboard 
-                user={user} 
-                token={token} 
-                onLogout={handleLogout}
-                systemStatus={systemStatus}
-                onStatusUpdate={loadSystemStatus}
-              /> :
-              <UserDashboard 
-                user={user} 
-                token={token} 
-                onLogout={handleLogout}
-                systemStatus={systemStatus}
-                onStatusUpdate={loadSystemStatus}
-              />
-          } 
-        />
+          {/* Dashboard */}
+          <Route 
+            path="/dashboard" 
+            element={
+              loading ? <LoadingScreen /> :
+              !user || !token ? <Navigate to="/login" replace /> :
+              user.role === 'admin' ? 
+                <AdminDashboard 
+                  user={user} 
+                  token={token} 
+                  onLogout={handleLogout}
+                  systemStatus={systemStatus}
+                  onStatusUpdate={loadSystemStatus}
+                /> :
+                <UserDashboard 
+                  user={user} 
+                  token={token} 
+                  onLogout={handleLogout}
+                  systemStatus={systemStatus}
+                  onStatusUpdate={loadSystemStatus}
+                />
+            } 
+          />
 
-        {/* Catch all - redirect to landing */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Router>
+          {/* Catch all - redirect to landing */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Router>
+    </LanguageProvider>
   );
 }
 

@@ -86,6 +86,13 @@ function CompanyManagement() {
 
   const exportToPDF = () => {
     try {
+      // Check if there is data to export
+      if (!filteredCompanies || filteredCompanies.length === 0) {
+        setMessage('No data to export. Please adjust your filters or add companies first.');
+        setTimeout(() => setMessage(''), 3000);
+        return;
+      }
+
       const doc = new jsPDF();
       
       // Add title
@@ -93,15 +100,15 @@ function CompanyManagement() {
       doc.setFont('helvetica', 'bold');
       doc.text('Companies Table', 14, 15);
       
-      // Prepare table data
+      // Prepare table data with safe fallbacks for undefined/null values
       const tableData = filteredCompanies.map(company => [
-        company.name,
-        company.subscription,
-        `${company.vehicleCount}/${company.vehicleLimit}`,
-        company.userCount.toString(),
-        getStatusLabel(company.status),
-        new Date(company.expiryDate).toLocaleDateString('en-US'),
-        company.daysRemaining.toString()
+        company.name || '',
+        company.subscription || '',
+        `${company.vehicleCount || 0}/${company.vehicleLimit || 0}`,
+        (company.userCount !== undefined && company.userCount !== null) ? company.userCount.toString() : '0',
+        getStatusLabel(company.status) || '',
+        company.expiryDate ? new Date(company.expiryDate).toLocaleDateString('en-US') : '',
+        (company.daysRemaining !== undefined && company.daysRemaining !== null) ? company.daysRemaining.toString() : '0'
       ]);
 
       doc.autoTable({
@@ -134,7 +141,7 @@ function CompanyManagement() {
       setTimeout(() => setMessage(''), 3000);
     } catch (error) {
       console.error('Error exporting PDF:', error);
-      setMessage('Error creating PDF');
+      setMessage('Error creating PDF: ' + (error.message || 'Unknown error'));
       setTimeout(() => setMessage(''), 3000);
     }
   };

@@ -6,7 +6,7 @@ import SetupPage from './pages/SetupPage';
 import LoginPage from './pages/LoginPage';
 import AdminDashboard from './pages/AdminDashboard';
 import UserDashboard from './pages/UserDashboard';
-import RegisterNow from './pages/RegisterNow'; // <-- ΝΕΟ import
+import RegisterNow from './pages/RegisterNow'; // <-- Σωστό import!
 import { checkSystemStatus } from './services/api';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -89,12 +89,12 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Landing Page - First route */}
+        {/* Landing Page */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/home" element={<LandingPage />} />
         <Route path="/landing" element={<LandingPage />} />
 
-        {/* Register δείχνει στο πραγματικό component */}
+        {/* Register - ΝΕΟ route, οδηγεί στο σωστό component */}
         <Route path="/register" element={<RegisterNow />} />
 
         {/* Subscribe placeholder */}
